@@ -1,0 +1,21 @@
+{
+  "name": "almere-3d-buildings",
+  "version": "1.0.0",
+  "description": "3D visualization of Almere buildings from OpenStreetMap",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -p 3000"
+  },
+  "keywords": [
+    "openstreetmap",
+    "overpass",
+    "3d",
+    "webgl",
+    "threejs",
+    "almere"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dubai 3D Buildings Map</title>
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        #map-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            max-width: 300px;
+        }
+        
+        #info h2 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .dashboard-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dashboard-button:first-of-type {
+            margin-top: 15px;
+        }
+        
+        .dashboard-button:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .dashboard-button:active {
+            transform: translateY(0);
+        }
+        
+        .dashboard-button:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            z-index: 200;
+            text-align: center;
+        }
+        
+        #loading.hidden {
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 100;
+        }
+        
+        #legend {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 100;
+            min-width: 200px;
+            max-width: 220px;
+            transition: all 0.3s ease;
+        }
+        
+        #legend.minimized {
+            padding: 10px;
+            min-width: auto;
+            max-width: none;
+            width: auto;
+        }
+        
+        #legend.minimized .legend-content {
+            display: none;
+        }
+        
+        #legend-minimize-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            transition: all 0.2s ease;
+            z-index: 101;
+        }
+        
+        #legend-minimize-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        #legend.minimized #legend-minimize-btn {
+            position: relative;
+            top: 0;
+            right: 0;
+        }
+        
+        .legend-content {
+            margin-top: 8px;
+        }
+        
+        .legend-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .legend-column {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        #legend .dashboard-button {
+            margin-top: 10px;
+            font-size: 13px;
+            padding: 8px 15px;
+            width: 100%;
+            display: block;
+        }
+        
+        #legend .dashboard-button:first-of-type {
+            margin-top: 15px;
+        }
+        
+        #legend h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        .legend-label {
+            flex: 1;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container">
+        <div id="cesiumContainer"></div>
+        <div id="legend"></div>
+        <div id="info">
+            <h2>Dubai 3D Buildings</h2>
+            <p>Loading buildings from OpenStreetMap...</p>
+            <p id="building-count">Buildings: 0</p>
+            <p id="isochrone-status" style="margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.8); display: none;"></p>
+        </div>
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Fetching 3D building data...</p>
+        </div>
+        <div id="controls">
+            <p>🖱️ Left click + drag: Rotate</p>
+            <p>🖱️ Middle click + drag: Pan</p>
+            <p>🖱️ Right click + drag: Zoom</p>
+            <p>🖱️ Scroll: Zoom</p>
+        </div>
+    </div>
+    
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,57 @@
+name,longitude,latitude,altitude,OBJECTID,RAIL_STATIONS_NO,STATION_NAME_EN,STATION_NAME_AR,RAIL_SYSTEM,STATUS,STATION_TYPE,ACTIVE,X_COORDINATE,Y_COORDINATE,COMMUNITY_NAME,LAST_EDITED_DATE,STATION_LOCATION,STATION_LOCATION_AR,STATION_LOCATION_TYPE,STATION_LOCATION_TYPE_AR
+kml_1,55.1386726700321,25.0708243448021,0.0,6,R37,DMCC,مركز دبي للسلع المتعددة,Metro,,E2,YES,480360.2438,2773913.7607,EMIRATES HILL FIRST,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_2,55.1737814679064,25.1020954960491,0.0,9,R34,Dubai Internet City,مدينة دبي للانترنت,Metro,,ET,YES,483906.5466,2777373.1657,EMIRATES HILL SECOND,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_3,55.2004431935456,25.1212312702368,0.0,11,R32,Mall of the Emirates,مول الامارات,Metro,,,YES,486597.914,2779490.0146,AL QUOZ IND. THIRD,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_4,55.2604185581497,25.1912745794258,0.0,14,R26,Business Bay,الخليج التجاري,Metro,,,YES,492650.682,2787244.4697,,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_5,55.2695181659012,25.2014008830228,0.0,15,R25,Burj Khalifa / Dubai Mall,برج خليفة / دبي مول,Metro,,E2,YES,493568.3933,2788365.7539,,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_6,55.275586654978,25.211030167768,0.0,16,R24,Financial Centre,المركز المالي,Metro,,,YES,494180.4635,2789432.1713,TRADE CENTER SECOND,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_7,55.2798209721383,25.2172144663905,0.0,17,R23,Emirates Towers,أبراج الامارات,Metro,,,YES,494607.4579,2790117.0674,TRADE CENTER SECOND,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_8,55.2850609836391,25.2248288748327,0.0,18,R22,World Trade Centre,المركز التجاري العالمي,Metro,,,YES,495135.8067,2790960.3629,TRADE CENTER SECOND,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_9,55.3241228689007,25.2632611403614,0.0,23,R17,Al Rigga,الرقة,Metro,,U,YES,499072.1938,2795216.9146,AL MURAQQABAT,30-04-2020,Red Line(MRed),أحمر,Underground,تحت الأرض
+kml_10,55.3524744810233,25.248427992026,0.0,26,R14,Airport Terminal 1,المطار - مبنى رقم 1,Metro,,ES,YES,501928.3972,2793573.8528,DUBAI INT'L AIRPORT,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_11,55.3595259814416,25.2450126638266,0.0,27,R13,Airport Terminal 3,المطار- مبنى رقم 3,Metro,,ES,YES,502638.8826,2793195.6343,DUBAI INT'L AIRPORT,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_12,55.36572697003,25.241059374014,0.0,28,R12,Emirates,طيران الامارات,Metro,,,YES,503263.7315,2792757.8388,AL GARHOUD,30-04-2020,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_13,55.3874763359064,25.2626590139676,0.0,31,G12,Al Qusais,القصيص,Metro,,E2,YES,505454.0646,2795151.2809,AL QUSAIS SECOND,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_14,55.3750092539012,25.2699287215223,0.0,32,G13,Dubai Airport Free Zone ,المنطقة الحرة بمطار دبي,Metro,,E2,YES,504197.95,2795956.1483,AL QUSAIS FIRST,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_15,55.3693408984036,25.2732735193129,0.0,33,G14,Al Nahda,النهدة,Metro,,E2,YES,503626.886,2796326.5096,AL QUSAIS FIRST,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_16,55.3527646281248,25.2776673585548,0.0,35,G16,Al Qiyadah,القيادة,Metro,,,YES,501957.1596,2796812.9011,AL TWAR FIRST,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_17,55.3206686042492,25.270345203203,0.0,38,G19,Salah Al Din,صلاح الدين,Metro,,U,YES,498724.3062,2796001.6933,AL KHABAISI,30-04-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_18,55.307602065776,25.2694158773663,0.0,39,G21,Baniyas Square,بني ياس,Metro,,U,YES,497408.1191,2795898.9337,AL RIGGA,30-04-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_19,55.3017779183856,25.2761955895185,0.0,40,G22,Gold Souq,سوق الذهب,Metro,,U,YES,496821.636,2796650.0949,,27-05-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_20,55.2937277078745,25.268862237231,0.0,41,G23,Al Ras,الراس,Metro,,U,YES,496010.5528,2795837.9433,AL RAS,30-04-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_21,55.2889535222213,25.2650853833992,0.0,42,G24,Al Ghubaiba,الغبيبة,Metro,,U,YES,495529.514,2795419.7056,AL SOUQ AL KABEER,30-04-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_22,55.2975589941485,25.2583014048824,0.0,43,G25,Sharaf DG,شرف دي جي,Metro,,U,YES,496396.1639,2794667.9393,MANKHOOL,29-11-2020,Green Line(MGrn),أخضر,Underground,تحت الأرض
+kml_23,55.3159566453886,25.2436671634977,0.0,44,G27,Oud Metha,عود ميثا,Metro,,E2,YES,498249.2972,2793046.4404,OUD METHA,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_24,55.3228668688792,25.2309030021803,0.0,45,G28,Dubai Health Care,مدينة دبي الطبية,Metro,,E2,YES,498945.3927,2791632.4,UMM HURAIR SECOND,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_25,55.3336743465696,25.2249775719747,0.0,46,G29,Al Jadaf,الجداف,Metro,,,YES,500034.3624,2790975.9618,AL JADAF,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_26,55.3389528013223,25.218948927941,0.0,47,G30,Creek,الخور,Metro,,,YES,500566.2764,2790308.1433,AL JADAF,30-04-2020,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_27,55.1521941561786,25.0304517835945,0.0,1281,R72,Al Furjan,الفرجان,Metro,Operational,,YES,481718.4736,2769439.6349,,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_28,55.1453181683781,25.0352240799955,0.0,1282,R71,Discovery Gardens,ديسكفري جاردنز,Metro,Operational,,YES,481025.2449,2769969.226,,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_29,55.1350507954736,25.0434380842564,0.0,1283,R70,The Gardens,الحدائق,Metro,Operational,,YES,479990.3773,2770880.6015,,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_30,55.1462011570336,24.9633681278092,0.0,1601,R76,Expo 2020,إكسبو 2020,Metro,Operational,,YES,481103.371,2762009.3846,Expo Station,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_31,55.1558410655275,25.0057961662749,0.0,1604,R74,Dubai Investment Park,مجمع دبي للاستثمار,Metro,Operational,,YES,482082.9617,2766707.9585,,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_32,55.1633514038596,25.0177968138826,0.0,1605,R73,Jumeirah Golf Estates,عقارات جميرا للجولف,Metro,Operational,,YES,482842.7652,2768036.339,,11-01-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_33,55.1491355013714,24.9840139595003,0.0,1603,R75,Station R75,,Metro,Non-operational,,NO,481402.7863,2764295.9773,,09-11-2021,Red Line(MRed),أحمر,,
+kml_34,55.1012474381106,25.0262906329955,0.0,3,R40,Energy,الطاقة,Metro,,,YES,476575.8545,2768986.5331,,09-11-2021,Branch Line (MBrch),أحمر,Elevated,فوق الأرض
+kml_35,55.0956978985299,25.0012910548443,0.0,2,R41,Danube,دانوب,Metro,,,YES,476010.8876,2766218.2084,JEBEL ALI IND.,09-11-2021,Branch Line (MBrch),أحمر,Elevated,فوق الأرض
+kml_36,55.1475227139945,25.0799290790354,0.0,7,R36,SOBHA REALTY,شوبا العقارية,Metro,,,YES,481254.5331,2774921.0758,EMIRATES HILL FIRST,08-11-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_37,55.117527908944,25.0467258552964,0.0,4,R39,Ibn Battuta,ابن بطوطة,Metro,,E2,YES,478222.636,2771247.5062,,09-11-2021,Branch Line (MBrch),أحمر,Elevated,فوق الأرض
+kml_38,55.3911980581608,25.2302229153128,0.0,29,R11,centrepoint,سنتربوينت,Metro,,,YES,505830.518,2791558.2764,AL RASHIDIYA,08-11-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_39,55.2921315806078,25.2334968429583,0.0,19,R21,max,ماكس,Metro,,,YES,495848.5742,2791920.3315,AL KIFAF,08-11-2021,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_40,55.2981959865435,25.2444935594039,0.0,20,R20,ADCB,بنك أبوظبي التجاري,Metro,,E2,YES,496459.9331,2793138.3354,AL KARAMA,05-10-2023,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_41,55.2078980008683,25.126721479561,0.0,12,R31,Equiti,اكويتي,Metro,,,YES,487350.3039,2780097.4725,AL QUOZ IND. THIRD,20-10-2022,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_42,55.4010071120899,25.2548051018846,0.0,30,G11,e&,إي آند,Metro,,E2,YES,506817.5185,2794281.868,AL QUSAIS THIRD,13-09-2024,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_43,55.1909310963337,25.1148094968598,0.0,10,R33,InsuranceMarket,سوق التأمين,Metro,,,YES,485637.859,2778779.6219,AL BARSHA FIRST,13-09-2024,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_44,55.3042525286521,25.2548557348481,0.0,21,R19,BurJuman - Red Line, برجمان - الخط الأحمر,Metro,,T,YES,497070.3747,2794286.0764,AL KARAMA,19-09-2023,Red Line(MRed),أحمر,Transmittal,محطة تحويل
+kml_45,55.2285087216716,25.1557271261218,0.0,13,R29,ONPASSIVE,اون باسيف,Metro,,,YES,489431.3191,2783308.8028,AL QUOZ IND. FIRST,02-10-2023,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_46,55.3300770562596,25.2543036505002,0.0,24,R16,City Centre Deira ,سيتي سنتر ديرة ,Metro,,U,YES,499671.9584,2794224.6051,PORT SAEED,27-10-2022,Red Line(MRed),أحمر,Underground,تحت الأرض
+kml_47,55.332983016961,25.2709038370306,0.0,37,G18,Abu Baker Al Siddique,أبوبكرالصديق,Metro,,E2,YES,499964.7135,2796063.5169,AL KHABAISI,19-09-2023,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_48,55.3042525286521,25.2548557348481,0.0,322,G26,BurJuman - Green Line, برجمان  - الخط الأخضر,Metro,,T,YES,497070.3747,2794286.0764,AL KARAMA,19-09-2023,Green Line(MGrn),أحمر,Transmittal,محطة تحويل
+kml_49,55.3462675881381,25.2752415849188,0.0,36,G17,Abu Hail,أبوهيل,Metro,,E2,YES,501302.7904,2796544.1022,AL KHABAISI,19-09-2023,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_50,55.0910408906585,24.9775243240598,0.0,1,R42,Life Pharmacy,صيدلية لايف,Metro,,E2,YES,475536.0612,2763586.3197,,25-07-2025,Branch Line (MBrch),أحمر,Elevated,فوق الأرض
+kml_51,55.1271734502596,25.0578530682143,0.0,5,R38,National Paints,دهانات ناشـونـال,Metro,,,YES,479197.868,2772478.5961,,25-07-2025,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_52,55.1580262856938,25.0889168891867,0.0,8,R35,Al Fardan Exchange,الفردان للصرافة,Metro,,E2,YES,482315.4775,2775915.2803,EMIRATES HILL SECOND,25-07-2025,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_53,55.3139027888539,25.2663356201704,0.0,22,R18,Union - Red Line,الإتحاد - الخط الأحمر,Metro,,T,YES,498042.7343,2795557.6056,AL RIGGA,25-07-2025,Red Line(MRed),أحمر,Transmittal,محطة تحويل
+kml_54,55.3400337670553,25.2494971226239,0.0,25,R15,Al Garhoud,القرهود,Metro,,,YES,500675.0371,2793692.1669,AL GARHOUD,25-07-2025,Red Line(MRed),أحمر,Elevated,فوق الأرض
+kml_55,55.3615799355074,25.2778021432765,0.0,34,G15,Stadium,الإستاد,Metro,,E2,YES,502845.0522,2796827.9899,AL QUSAIS FIRST,25-07-2025,Green Line(MGrn),أخضر,Elevated,فوق الأرض
+kml_56,55.3139027888539,25.2663356201704,0.0,321,G20,Union - Green Line,الاتحاد - الخط الأخضر,Metro,,T,YES,498042.7343,2795557.6056,AL RIGGA,25-07-2025,Green Line(MGrn),أحمر,Transmittal,محطة تحويل
