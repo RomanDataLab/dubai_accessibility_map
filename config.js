@@ -5,8 +5,17 @@ export const CESIUM_CONFIG = {
 };
 
 // OpenRouteService Configuration
+// For Vercel: uses /api/isochrones proxy (API key handled server-side)
+// For local dev: uses direct API with API key below
 export const ORS_CONFIG = {
-    apiKey: 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImQ3YzRjNGQ4ZDZhNzRhNGU5ZDdkMzY4OTg1ZGRlMzM0IiwiaCI6Im11cm11cjY0In0=',
-    url: 'https://api.openrouteservice.org/v2/isochrones/foot-walking'
+    apiKey: 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImQ3YzRjNGQ4ZDZhNzRhNGU5ZDdkMzY4OTg1ZGRlMzM0IiwiaCI6Im11cm11cjY0In0=', // Used for local dev
+    url: 'https://api.openrouteservice.org/v2/isochrones/foot-walking' // Direct API URL
 };
+
+// Debug: Log config values
+console.log('ORS_CONFIG loaded:', {
+    url: ORS_CONFIG.url,
+    usingProxy: ORS_CONFIG.url.startsWith('/api/'),
+    note: 'API key is handled server-side via proxy'
+});
 

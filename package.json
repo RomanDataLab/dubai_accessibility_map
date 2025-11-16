@@ -4,8 +4,11 @@
   "description": "3D visualization of Almere buildings from OpenStreetMap",
   "type": "module",
   "scripts": {
-    "start": "npx serve .",
-    "dev": "npx serve . -p 3000"
+    "build": "node build.js",
+    "start": "npm run build && npx serve .",
+    "dev": "node proxy-server.js",
+    "dev:static": "npx serve . -p 3000",
+    "vercel-build": "node build.js"
   },
   "keywords": [
     "openstreetmap",

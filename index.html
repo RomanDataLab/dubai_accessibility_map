@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dubai 3D Buildings Map</title>
+    <title>Dubai 3d accessibility map</title>
     <!-- Google Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
@@ -43,7 +43,7 @@
             border-radius: 8px;
             font-size: 14px;
             z-index: 100;
-            max-width: 300px;
+            max-width: 150px;
         }
         
         #info h2 {
@@ -141,15 +141,13 @@
             border-radius: 8px;
             font-size: 13px;
             z-index: 100;
-            min-width: 200px;
-            max-width: 220px;
+            width: 420px;
+            margin: 5px;
             transition: all 0.3s ease;
         }
         
         #legend.minimized {
             padding: 10px;
-            min-width: auto;
-            max-width: none;
             width: auto;
         }
         
@@ -195,13 +193,93 @@
         
         .legend-container {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             align-items: flex-start;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .legend-column {
-            flex: 1;
+            flex: 0 0 calc(25% - 7.5px);
             min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        
+        .legend-column:first-child {
+            flex: 0 0 calc(50% - 5px);
+        }
+        
+        .legend-column-right {
+            flex: 0 0 calc(25% - 7.5px);
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        
+        .isochrone-toggle-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .isochrone-toggle-btn:first-of-type {
+            margin-top: 15px;
+        }
+        
+        .isochrone-toggle-btn:hover {
+            background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .isochrone-toggle-btn:active {
+            transform: translateY(0);
+        }
+        
+        .isochrone-toggle-btn.active {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+        
+        .isochrone-toggle-btn.active:hover {
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+        }
+        
+        .isochrone-toggle-btn:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        @media (max-width: 768px) {
+            #legend {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 8px 8px 0 0;
+            }
+            
+            #info {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: auto;
+                top: auto;
+                max-width: 150px;
+            }
         }
         
         #legend .dashboard-button {
@@ -250,10 +328,19 @@
         <div id="cesiumContainer"></div>
         <div id="legend"></div>
         <div id="info">
-            <h2>Dubai 3D Buildings</h2>
+            <h2>Dubai 3d accessibility map</h2>
             <p>Loading buildings from OpenStreetMap...</p>
             <p id="building-count">Buildings: 0</p>
             <p id="isochrone-status" style="margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.8); display: none;"></p>
+            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.3); font-size: 11px;">
+                <p style="margin: 5px 0; color: rgba(255,255,255,0.8);">Data sources:</p>
+                <p style="margin: 3px 0;">
+                    <a href="https://cesium.com/" target="_blank" style="color: rgba(255,255,255,0.9); text-decoration: underline;">Cesium Ion</a>
+                </p>
+                <p style="margin: 3px 0;">
+                    <a href="https://www.dubaipulse.gov.ae" target="_blank" style="color: rgba(255,255,255,0.9); text-decoration: underline;">Dubai Open Data Portal</a>
+                </p>
+            </div>
         </div>
         <div id="loading">
             <div class="spinner"></div>
@@ -267,6 +354,16 @@
         </div>
     </div>
     
+    <!-- Inject environment variables BEFORE modules load -->
+    <script>
+        // Vercel will replace these at build time if environment variables are set
+        // This MUST run before app.js module loads
+        window.__ENV__ = {
+            VITE_CESIUM_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZmVlY2ZkMC05NGVmLTQyMDAtYTg4OS1lMzJlNmE5OWIzOTQiLCJpZCI6MjUzODE2LCJpYXQiOjE3NjMxNDg5MDF9.Lx_sgH5AYLgtDEedYhONCEwItsyH0rDIIaKCd1tPFVU',
+            VITE_ORS_API_KEY: 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImQ3YzRjNGQ4ZDZhNzRhNGU5ZDdkMzY4OTg1ZGRlMzM0IiwiaCI6Im11cm11cjY0In0='
+        };
+        console.log('Environment variables initialized:', window.__ENV__);
+    </script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
     <script type="module" src="app.js"></script>

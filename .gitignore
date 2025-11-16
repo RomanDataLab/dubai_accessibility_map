@@ -20,6 +20,8 @@ ENV/
 dubai_waterfront_buildings_*.csv
 dubai_waterfront_buildings_*.geojson
 *.geojson
+# Allow merged isochrone files for deployment
+!isochrones_*_merged.geojson
 
 # Log files
 *.txt

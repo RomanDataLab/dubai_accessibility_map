@@ -1,5 +1,19 @@
 import { CESIUM_CONFIG, ORS_CONFIG } from './config.js';
 
+// Verify config is loaded
+console.log('App.js: ORS_CONFIG check:', {
+    hasConfig: !!ORS_CONFIG,
+    hasApiKey: !!ORS_CONFIG?.apiKey,
+    apiKey: ORS_CONFIG?.apiKey ? ORS_CONFIG.apiKey.substring(0, 20) + '...' : 'MISSING',
+    url: ORS_CONFIG?.url
+});
+
+if (!ORS_CONFIG || !ORS_CONFIG.apiKey) {
+    console.error('ERROR: OpenRouteService API key not found in config.js');
+    console.error('ORS_CONFIG:', ORS_CONFIG);
+    console.error('window.__ENV__:', window.__ENV__);
+}
+
 // Dubai Marina tram station coordinates
 const DUBAI_CENTER = {
     lat: 25.080803,
@@ -615,7 +629,7 @@ function createLegend(buildingTypes = [], colorMap = {}) {
     
     let legendHTML = '<button id="legend-minimize-btn" title="Minimize/Expand">-</button>';
     legendHTML += '<div class="legend-content">';
-    legendHTML += '<h3>Rail Stations/ Run isochrones</h3>';
+    legendHTML += '<h3>Rail Stations/ Run isochrones / Show isochrones</h3>';
     legendHTML += '<div class="legend-container">';
     
     // Left column: Rail lines
@@ -645,7 +659,7 @@ function createLegend(buildingTypes = [], colorMap = {}) {
     legendHTML += '</div>';
     legendHTML += '</div>'; // End left column
     
-    // Right column: Isochrone buttons
+    // Middle column: Isochrone generation buttons
     legendHTML += '<div class="legend-column">';
     legendHTML += '<button id="isochrone-btn-5min" class="dashboard-button" disabled>';
     legendHTML += '5min';
@@ -659,11 +673,23 @@ function createLegend(buildingTypes = [], colorMap = {}) {
     legendHTML += '<button id="isochrone-btn-stop" class="dashboard-button" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); margin-top: 15px;" disabled>';
     legendHTML += 'Stop';
     legendHTML += '</button>';
+    legendHTML += '</div>'; // End middle column
+    
+    // Right column: Merged isochrone toggle buttons
+    legendHTML += '<div class="legend-column-right">';
+    legendHTML += '<button id="merged-isochrone-btn-5min" class="isochrone-toggle-btn">';
+    legendHTML += '5min';
+    legendHTML += '</button>';
+    legendHTML += '<button id="merged-isochrone-btn-10min" class="isochrone-toggle-btn">';
+    legendHTML += '10min';
+    legendHTML += '</button>';
+    legendHTML += '<button id="merged-isochrone-btn-15min" class="isochrone-toggle-btn">';
+    legendHTML += '15min';
+    legendHTML += '</button>';
     legendHTML += '</div>'; // End right column
     
     legendHTML += '</div>'; // End legend-container
     
-    legendHTML += '<p style="margin-top: 15px; font-size: 11px; color: rgba(255,255,255,0.7);">Source: OpenRouteService</p>';
     legendHTML += '</div>'; // End legend-content
     
     legendEl.innerHTML = legendHTML;
@@ -1252,22 +1278,59 @@ async function fetchIsochroneORS(lon, lat, stationName = '', rangeSeconds = ISO_
         range_type: "time"
     };
     
-    isochroneLog.addEntry('request', `API Request for station: ${stationName || 'Unknown'}`, {
-        station: stationName,
-        coordinates: { lon, lat },
-        requestBody: body,
-        url: ORS_CONFIG.url
-    });
-    
     try {
         const requestStartTime = Date.now();
-        const res = await fetch(ORS_CONFIG.url, {
+        
+        // Detect if running locally or on Vercel
+        const hostname = window.location.hostname;
+        const isLocalDev = hostname === 'localhost' || 
+                           hostname === '127.0.0.1' ||
+                           hostname.includes('localhost');
+        // Use /api/isochrones - proxy server (local) or serverless function (Vercel) handles API key
+        const apiUrl = '/api/isochrones';
+        
+        console.log('🔍 Environment detection:', {
+            hostname: hostname,
+            isLocalDev: isLocalDev,
+            apiUrl: apiUrl,
+            note: 'API key handled by proxy/serverless function'
+        });
+        
+        isochroneLog.addEntry('request', `API Request for station: ${stationName || 'Unknown'}`, {
+            station: stationName,
+            coordinates: { lon, lat },
+            requestBody: body,
+            url: apiUrl,
+            isLocalDev: isLocalDev,
+            hostname: hostname
+        });
+        
+        console.log('Making ORS API request:', {
+            isLocalDev: isLocalDev,
+            apiUrl: apiUrl,
+            hostname: hostname,
+            body: body
+        });
+        
+        // Headers - API key is handled by proxy/serverless function
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json, application/geo+json"
+        };
+        
+        const res = await fetch(apiUrl, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: ORS_CONFIG.apiKey
-            },
-            body: JSON.stringify(body)
+            headers: headers,
+            body: JSON.stringify(body),
+            mode: "cors",
+            credentials: "omit"
+        });
+        
+        console.log('ORS API Response:', {
+            status: res.status,
+            statusText: res.statusText,
+            ok: res.ok,
+            headers: Object.fromEntries(res.headers.entries())
         });
         
         const requestDuration = Date.now() - requestStartTime;
@@ -1281,7 +1344,12 @@ async function fetchIsochroneORS(lon, lat, stationName = '', rangeSeconds = ISO_
         });
         
         if (!res.ok) {
-            const txt = await res.text();
+            let txt = '';
+            try {
+                txt = await res.text();
+            } catch (e) {
+                txt = 'Could not read response body';
+            }
             
             // Try to parse error JSON
             let errorDetails = txt;
@@ -1290,6 +1358,26 @@ async function fetchIsochroneORS(lon, lat, stationName = '', rangeSeconds = ISO_
                 errorDetails = JSON.stringify(errorJson, null, 2);
             } catch (e) {
                 // Not JSON, use text as is
+            }
+            
+            // Log detailed error for debugging
+            console.error(`❌ ORS API Error for ${stationName}:`, {
+                status: res.status,
+                statusText: res.statusText,
+                error: errorDetails,
+                url: apiUrl,
+                isLocalDev: isLocalDev,
+                hostname: hostname,
+                requestBody: body
+            });
+            
+            // Show user-friendly error in console
+            if (res.status === 401) {
+                console.error('🔑 Authentication failed - API key may be invalid or expired');
+            } else if (res.status === 403) {
+                console.error('🚫 Access forbidden - Check API key permissions');
+            } else if (res.status === 429) {
+                console.error('⏱️ Rate limit exceeded - Too many requests');
             }
             
             isochroneLog.addEntry('error', `API Error Response`, {
@@ -1302,7 +1390,15 @@ async function fetchIsochroneORS(lon, lat, stationName = '', rangeSeconds = ISO_
             throw new Error(`ORS API Error ${res.status}: ${res.statusText}\nDetails: ${errorDetails}`);
         }
         
-        const geojson = await res.json();
+        let geojson;
+        try {
+            geojson = await res.json();
+        } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            const textResponse = await res.text();
+            console.error('Response text:', textResponse);
+            throw new Error(`Failed to parse API response as JSON: ${jsonError.message}`);
+        }
         
         isochroneLog.addEntry('success', `API Success - Features received`, {
             station: stationName,
@@ -1341,11 +1437,36 @@ async function fetchIsochroneORS(lon, lat, stationName = '', rangeSeconds = ISO_
 function styleIsochroneDataSource(dataSource, lineColor) {
     dataSource.entities.values.forEach((entity) => {
         if (entity.polygon) {
+            // Use color from GeoJSON properties if available, otherwise use provided lineColor
+            let fillColor = lineColor || '#FF0000';
+            let strokeColor = lineColor || '#FF0000';
+            
+            if (entity.properties) {
+                // Check for fillColor or strokeColor in properties
+                const fillColorProp = entity.properties.fillColor || entity.properties.fill;
+                const strokeColorProp = entity.properties.strokeColor || entity.properties.stroke;
+                
+                if (fillColorProp) {
+                    try {
+                        fillColor = fillColorProp.getValue ? fillColorProp.getValue() : fillColorProp;
+                    } catch (e) {
+                        fillColor = fillColorProp;
+                    }
+                }
+                if (strokeColorProp) {
+                    try {
+                        strokeColor = strokeColorProp.getValue ? strokeColorProp.getValue() : strokeColorProp;
+                    } catch (e) {
+                        strokeColor = strokeColorProp;
+                    }
+                }
+            }
+            
             // Use line color with 25% transparency (0.25 alpha)
-            const color = Cesium.Color.fromCssColorString(lineColor);
-            entity.polygon.material = Cesium.Color.fromAlpha(color, 0.25);
+            const fill = Cesium.Color.fromCssColorString(fillColor);
+            entity.polygon.material = Cesium.Color.fromAlpha(fill, 0.25);
             entity.polygon.outline = true;
-            entity.polygon.outlineColor = Cesium.Color.fromCssColorString(lineColor);
+            entity.polygon.outlineColor = Cesium.Color.fromCssColorString(strokeColor);
             entity.polygon.outlineWidth = 2;
             entity.polygon.extrudedHeight = 0;
             entity.polygon.height = 0;
@@ -1572,17 +1693,35 @@ function setupIsochroneButton() {
         if (!btn) return;
         
             btn.addEventListener('click', async () => {
+            console.log(`🚀 Isochrone button clicked: ${minutes}min`);
+            
             const viewer = window.cesiumViewer;
             const stations = window.allStations;
             const typeKey = `${minutes}min`;
             
+            console.log('Button click - checking prerequisites:', {
+                hasViewer: !!viewer,
+                hasStations: !!stations,
+                stationCount: stations?.length || 0,
+                hasORSConfig: !!ORS_CONFIG,
+                hasApiKey: !!ORS_CONFIG?.apiKey
+            });
+            
             if (!viewer) {
+                console.error('❌ Cesium viewer not initialized');
                 alert('Cesium viewer not initialized');
                 return;
             }
             
             if (!stations || stations.length === 0) {
+                console.error('❌ No stations loaded');
                 alert('No stations loaded. Please wait for stations to load.');
+                return;
+            }
+            
+            if (!ORS_CONFIG || !ORS_CONFIG.url) {
+                console.error('❌ ORS configuration not available');
+                alert('OpenRouteService configuration is not available. Check console for details.');
                 return;
             }
             
@@ -1609,14 +1748,20 @@ function setupIsochroneButton() {
             btn.textContent = `Creating ${minutes}min...`;
             
             try {
+                console.log(`📊 Starting isochrone creation for ${stations.length} stations (${minutes} minutes)`);
+                
                 // Create isochrones for all stations with specified time range
                 await createIsochronesForStations(viewer, stations, null, rangeSeconds, typeKey);
+                
+                console.log(`✅ Isochrone creation completed for ${minutes}min`);
                 
                 // Check if stopped
                 if (window.stopIsochroneCreation) {
                     btn.textContent = `${minutes}min (Stopped)`;
+                    console.log(`⏸ Isochrone creation was stopped for ${minutes}min`);
                 } else {
                     btn.textContent = `${minutes}min ✓`;
+                    console.log(`✓ Successfully completed ${minutes}min isochrones`);
                 }
                 
                 // Disable stop button and re-enable other buttons
@@ -1632,8 +1777,21 @@ function setupIsochroneButton() {
                     });
                 }, 3000);
             } catch (error) {
-                console.error(`Error creating ${minutes}min isochrones:`, error);
+                console.error(`❌ Error creating ${minutes}min isochrones:`, error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
                 btn.textContent = `${minutes}min (Error)`;
+                
+                // Show user-friendly error
+                const statusEl = document.getElementById('isochrone-status');
+                if (statusEl) {
+                    statusEl.innerHTML = `❌ Error: ${error.message}`;
+                    statusEl.style.color = 'rgba(255,0,0,0.9)';
+                    statusEl.style.display = 'block';
+                }
                 
                 // Disable stop button and re-enable other buttons
                 if (stopBtn) {
@@ -1655,6 +1813,9 @@ function setupIsochroneButton() {
             const stations = window.allStations;
             if (stations && stations.length > 0) {
                 btn.disabled = false;
+                console.log(`Enabled ${buttonId} button - ${stations.length} stations loaded`);
+            } else {
+                console.warn(`Could not enable ${buttonId} button - no stations found`);
             }
         }, 2000);
     };
@@ -1673,6 +1834,133 @@ function setupIsochroneButton() {
             stopBtn.textContent = 'Stopping...';
             console.log('Stop button clicked - stopping isochrone creation');
         });
+    }
+    
+    // Setup merged isochrone buttons
+    setupMergedIsochroneButtons();
+}
+
+// Setup merged isochrone toggle buttons
+function setupMergedIsochroneButtons() {
+    // Initialize merged isochrone data sources storage
+    if (!window.mergedIsochroneDataSources) {
+        window.mergedIsochroneDataSources = {};
+    }
+    
+    // Setup buttons for 5min, 10min, 15min
+    ['5min', '10min', '15min'].forEach(range => {
+        const btn = document.getElementById(`merged-isochrone-btn-${range}`);
+        if (!btn) return;
+        
+        btn.addEventListener('click', () => {
+            toggleMergedIsochrone(range, btn);
+        });
+        
+        // Double click to hide
+        btn.addEventListener('dblclick', () => {
+            hideMergedIsochrone(range, btn);
+        });
+    });
+}
+
+// Toggle merged isochrone on/off
+async function toggleMergedIsochrone(range, button) {
+    const viewer = window.cesiumViewer;
+    if (!viewer) {
+        console.error('Cesium viewer not initialized');
+        return;
+    }
+    
+    // Check if already loaded
+    if (window.mergedIsochroneDataSources[range]) {
+        // Hide it
+        hideMergedIsochrone(range, button);
+        return;
+    }
+    
+    // Load and show
+    try {
+        button.disabled = true;
+        button.textContent = 'Loading...';
+        
+        // Load merged GeoJSON file
+        const filename = `isochrones_${range}_merged.geojson`;
+        const response = await fetch(filename);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to load ${filename}: ${response.statusText}`);
+        }
+        
+        const geojson = await response.json();
+        
+        // Load into Cesium
+        const ds = await Cesium.GeoJsonDataSource.load(geojson, {
+            clampToGround: true
+        });
+        
+        // Style the isochrones
+        styleIsochroneDataSource(ds, null); // Use colors from GeoJSON properties
+        
+        viewer.dataSources.add(ds);
+        
+        // Store reference
+        window.mergedIsochroneDataSources[range] = ds;
+        
+        // Update button state
+        button.classList.add('active');
+        button.textContent = range;
+        button.disabled = false;
+        
+        // Block left-side buttons for this range
+        blockIsochroneButtons(range, true);
+        
+        console.log(`✅ Loaded merged ${range} isochrones`);
+    } catch (error) {
+        console.error(`Error loading merged ${range} isochrones:`, error);
+        button.disabled = false;
+        button.textContent = range;
+        alert(`Failed to load merged ${range} isochrones: ${error.message}`);
+    }
+}
+
+// Hide merged isochrone
+function hideMergedIsochrone(range, button) {
+    const viewer = window.cesiumViewer;
+    if (!viewer) return;
+    
+    const ds = window.mergedIsochroneDataSources[range];
+    if (ds) {
+        viewer.dataSources.remove(ds);
+        delete window.mergedIsochroneDataSources[range];
+        
+        // Update button state
+        button.classList.remove('active');
+        button.textContent = range;
+        
+        // Unblock left-side buttons
+        blockIsochroneButtons(range, false);
+        
+        console.log(`✅ Hidden merged ${range} isochrones`);
+    }
+}
+
+// Block/unblock left-side isochrone generation buttons
+function blockIsochroneButtons(range, block) {
+    const buttonId = `isochrone-btn-${range}`;
+    const btn = document.getElementById(buttonId);
+    
+    if (btn) {
+        if (block) {
+            btn.disabled = true;
+            btn.title = `Disabled: Merged ${range} isochrones are currently displayed`;
+        } else {
+            // Only enable if stations are loaded
+            const stations = window.allStations;
+            if (stations && stations.length > 0) {
+                btn.disabled = false;
+                btn.title = '';
+            }
+        }
     }
 }
 
@@ -1795,7 +2083,11 @@ async function createIsochronesForStations(viewer, stations, stationType = null,
         delayBetweenRequests: '1200ms'
     });
     
-    console.log(`Creating isochrones for ${stations.length} stations...`);
+    console.log(`🔄 Creating isochrones for ${stations.length} stations (${rangeMinutes} minutes)...`);
+    console.log('ORS Config check:', {
+        url: ORS_CONFIG.url,
+        usingProxy: ORS_CONFIG.url.startsWith('/api/')
+    });
     
     let successCount = 0;
     let failCount = 0;
@@ -2172,30 +2464,30 @@ async function addSchoolsFromCSV(viewer, csvFile) {
         
         console.log(`Loaded ${schools.length} schools from CSV`);
         
-        // Create white school icon from SVG
-        const createWhiteSchoolIcon = () => {
+        // Create yellow school icon from SVG
+        const createYellowSchoolIcon = () => {
             const canvas = document.createElement('canvas');
             canvas.width = 16;
             canvas.height = 16;
             const ctx = canvas.getContext('2d');
             
-            // Load SVG and draw it in white
+            // Load SVG and draw it in yellow
             const img = new Image();
             return new Promise((resolve) => {
                 img.onload = () => {
                     // Draw SVG to canvas
                     ctx.drawImage(img, 0, 0, 16, 16);
                     
-                    // Convert to white by applying white color overlay
+                    // Convert to yellow by applying yellow color overlay
                     const imageData = ctx.getImageData(0, 0, 16, 16);
                     const data = imageData.data;
                     
-                    // Make all non-transparent pixels white
+                    // Make all non-transparent pixels yellow
                     for (let i = 0; i < data.length; i += 4) {
                         if (data[i + 3] > 0) { // If pixel is not transparent
                             data[i] = 255;     // R
                             data[i + 1] = 255; // G
-                            data[i + 2] = 255; // B
+                            data[i + 2] = 0;   // B
                             // Keep alpha as is
                         }
                     }
@@ -2207,17 +2499,17 @@ async function addSchoolsFromCSV(viewer, csvFile) {
             });
         };
         
-        // Create white icon once
-        const whiteIconUrl = await createWhiteSchoolIcon();
+        // Create yellow icon once
+        const yellowIconUrl = await createYellowSchoolIcon();
         
-        // Add schools as entities with white school icon
+        // Add schools as entities with yellow school icon
         const schoolEntities = [];
         
         for (const school of schools) {
             const entity = viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(school.lon, school.lat),
                 billboard: {
-                    image: whiteIconUrl,
+                    image: yellowIconUrl,
                     width: 16,
                     height: 16,
                     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
@@ -2378,6 +2670,55 @@ async function main() {
         `;
     }
 }
+
+// Test function to verify ORS API key (can be called from browser console)
+window.testORSAPI = async function(lon = 55.146909, lat = 25.080803) {
+    console.log('🧪 Testing OpenRouteService API...');
+    console.log('API Key:', ORS_CONFIG.apiKey ? ORS_CONFIG.apiKey.substring(0, 30) + '...' : 'MISSING');
+    console.log('URL:', ORS_CONFIG.url);
+    
+    const testBody = {
+        locations: [[lon, lat]],
+        range: [300], // 5 minutes
+        range_type: "time"
+    };
+    
+    try {
+        const res = await fetch(ORS_CONFIG.url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": ORS_CONFIG.apiKey,
+                "Accept": "application/json, application/geo+json"
+            },
+            body: JSON.stringify(testBody),
+            mode: "cors",
+            credentials: "omit"
+        });
+        
+        console.log('Response Status:', res.status, res.statusText);
+        
+        if (res.ok) {
+            const geojson = await res.json();
+            console.log('✅ API Test SUCCESS!', {
+                features: geojson.features?.length || 0,
+                type: geojson.type
+            });
+            return geojson;
+        } else {
+            const errorText = await res.text();
+            console.error('❌ API Test FAILED:', {
+                status: res.status,
+                statusText: res.statusText,
+                error: errorText
+            });
+            return null;
+        }
+    } catch (error) {
+        console.error('❌ API Test ERROR:', error);
+        return null;
+    }
+};
 
 // Start the application
 main();
