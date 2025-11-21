@@ -1,6 +1,6 @@
-# Almere 3D Buildings Map
+# Dubai Map
 
-A WebGL-based 3D visualization of buildings in Almere, Netherlands, extracted from OpenStreetMap using the Overpass API.
+A WebGL-based 3D visualization of buildings in Dubai, the UAE, extracted from OpenStreetMap using the Overpass API.
 
 ## Features
 
