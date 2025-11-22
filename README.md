@@ -1,11 +1,16 @@
-# Almere 3D Buildings Map
+# Dubai 3D Accessibility Map
 
-A WebGL-based 3D visualization of buildings in Almere, Netherlands, extracted from OpenStreetMap using the Overpass API.
+A WebGL-based 3D visualization of Dubai's accessibility infrastructure, including buildings, metro stations, tram stations, monorail stations, schools, and isochrones (walking distance areas).
 
 ## Features
 
-- 🏢 Fetches 3D building data from OpenStreetMap via Overpass API
-- 🎨 Renders buildings in 3D using Three.js and WebGL
+- 🏢 Displays 3D building data from Cesium Ion
+- 🚇 Metro stations with color-coded icons (Red Line, Green Line)
+- 🚊 Tram stations with orange icons
+- 🚈 Monorail stations with blue icons
+- 🏫 Schools with yellow icons
+- 🚶 Isochrone visualization (5, 10, 15 minute walking distances)
+- 🎨 Interactive 3D map using Cesium
 - 🖱️ Interactive camera controls (rotate, pan, zoom)
 - 📊 Shows building count and loading status
 
@@ -52,16 +57,20 @@ You can also open `index.html` directly in your browser, but note that some brow
 
 ## How It Works
 
-1. **Data Fetching**: Queries the Overpass API for buildings in Almere with height information
-2. **Data Processing**: Extracts building coordinates and heights from OSM data
-3. **3D Rendering**: Creates 3D geometries using Three.js and displays them in a WebGL canvas
+1. **3D Buildings**: Loads 3D building data from Cesium Ion for Dubai
+2. **Station Data**: Loads metro, tram, and monorail station locations from CSV files
+3. **School Data**: Loads school locations from Dubai Open Data Portal
+4. **Isochrones**: Generates walking distance areas using OpenRouteService API
+5. **3D Rendering**: Displays everything in an interactive 3D map using Cesium
 
 ## Technical Details
 
-- Uses Three.js for WebGL rendering
-- Converts geographic coordinates (lat/lon) to local 3D coordinates
-- Extrudes building footprints to create 3D shapes based on height data
-- Falls back to default heights if building height is not specified in OSM
+- Uses Cesium for 3D globe rendering
+- Custom icon generation for stations (metro, tram, monorail) using HTML5 Canvas
+- School icons loaded from SVG and colorized
+- Isochrone data generated using OpenRouteService API
+- Station data from Dubai Open Data Portal
+- Deployed on Vercel with proper static asset handling
 
 ## Exporting Buildings as GeoJSON
 
@@ -85,12 +94,19 @@ The script:
 - Converts to GeoJSON format with polygon geometries
 - Saves the file with a timestamp in the filename
 
+## Data Sources
+
+- **3D Buildings**: Cesium Ion
+- **Metro/Tram/Monorail Stations**: Dubai Open Data Portal
+- **Schools**: Dubai Open Data Portal (KHDA)
+- **Isochrones**: OpenRouteService API
+
 ## Notes
 
-- The Overpass API may take some time to respond, especially for large areas
-- Buildings without height data will use a default height of 10 meters
-- The visualization shows buildings with height or min_height tags in OpenStreetMap
-- The Python script extracts buildings directly from OpenStreetMap, not from Cesium tileset
+- Requires Cesium Ion access token (configured in app.js)
+- Requires OpenRouteService API key for isochrone generation
+- Station icons are dynamically generated using Canvas API
+- Isochrone generation may take time depending on the number of stations
 
 ## License
 
