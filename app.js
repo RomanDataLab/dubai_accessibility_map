@@ -2473,29 +2473,50 @@ async function addSchoolsFromCSV(viewer, csvFile) {
             
             // Load SVG and draw it in yellow
             const img = new Image();
-            return new Promise((resolve) => {
+            img.crossOrigin = 'anonymous'; // Allow CORS for SVG loading
+            return new Promise((resolve, reject) => {
                 img.onload = () => {
-                    // Draw SVG to canvas
-                    ctx.drawImage(img, 0, 0, 16, 16);
-                    
-                    // Convert to yellow by applying yellow color overlay
-                    const imageData = ctx.getImageData(0, 0, 16, 16);
-                    const data = imageData.data;
-                    
-                    // Make all non-transparent pixels yellow
-                    for (let i = 0; i < data.length; i += 4) {
-                        if (data[i + 3] > 0) { // If pixel is not transparent
-                            data[i] = 255;     // R
-                            data[i + 1] = 255; // G
-                            data[i + 2] = 0;   // B
-                            // Keep alpha as is
+                    try {
+                        // Draw SVG to canvas
+                        ctx.drawImage(img, 0, 0, 16, 16);
+                        
+                        // Convert to yellow by applying yellow color overlay
+                        const imageData = ctx.getImageData(0, 0, 16, 16);
+                        const data = imageData.data;
+                        
+                        // Make all non-transparent pixels yellow
+                        for (let i = 0; i < data.length; i += 4) {
+                            if (data[i + 3] > 0) { // If pixel is not transparent
+                                data[i] = 255;     // R
+                                data[i + 1] = 255; // G
+                                data[i + 2] = 0;   // B
+                                // Keep alpha as is
+                            }
                         }
+                        
+                        ctx.putImageData(imageData, 0, 0);
+                        resolve(canvas.toDataURL());
+                    } catch (error) {
+                        console.error('Error processing school icon:', error);
+                        // Fallback: create a simple yellow circle icon
+                        ctx.fillStyle = '#FFFF00';
+                        ctx.beginPath();
+                        ctx.arc(8, 8, 6, 0, 2 * Math.PI);
+                        ctx.fill();
+                        resolve(canvas.toDataURL());
                     }
-                    
-                    ctx.putImageData(imageData, 0, 0);
+                };
+                img.onerror = (error) => {
+                    console.error('Error loading school.svg:', error);
+                    // Fallback: create a simple yellow circle icon
+                    ctx.fillStyle = '#FFFF00';
+                    ctx.beginPath();
+                    ctx.arc(8, 8, 6, 0, 2 * Math.PI);
+                    ctx.fill();
                     resolve(canvas.toDataURL());
                 };
-                img.src = './school.svg';
+                // Use absolute path for Vercel compatibility
+                img.src = window.location.origin + '/school.svg';
             });
         };
         
