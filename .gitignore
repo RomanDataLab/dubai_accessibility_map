@@ -30,6 +30,9 @@ isochrone_log_*.txt
 # Temporary/check files
 check_default_color.js
 
+# Video files
+*.mp4
+
 # OS files
 .DS_Store
 .DS_Store?
