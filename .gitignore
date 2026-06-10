@@ -54,3 +54,6 @@ desktop.ini
 # Build outputs
 dist/
 build/
+
+# Project documentation
+graph.md
