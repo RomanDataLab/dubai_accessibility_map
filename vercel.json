@@ -27,7 +27,7 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!api|.*\\.(svg|png|jpg|jpeg|gif|ico|css|js|json|geojson|csv|kml|mp4|woff|woff2|ttf|eot|html)).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
